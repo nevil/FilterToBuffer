@@ -19,7 +19,7 @@ class RegionHolder:
                 return
         self.regions.append(region)
 
-class FilterToNewBufferCommand(sublime_plugin.TextCommand):
+class FilterToNewBufferFromSelectionCommand(sublime_plugin.TextCommand):
     """Filter the current selection in to a new buffer"""
     def run(self, edit):
         selections = self.view.sel()
