@@ -34,7 +34,8 @@ class FilterToNewBufferFromSelectionCommand(sublime_plugin.TextCommand):
         regions = self.view.find_all(self.view.substr(selections[0]))
         if len(regions) > 0:
             v = self.view.window().new_file()
-            v.set_name("Filtered from: + " + os.path.basename(self.view.file_name()))
+#            v.set_name("Filtered from: + " + os.path.basename(self.view.file_name()))
+            v.set_name("Filtered from:")
             v.set_scratch(True)
 
             new_regions = RegionHolder()
