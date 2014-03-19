@@ -1,23 +1,6 @@
 import sublime, sublime_plugin
 import os.path
-
-class RegionHolder:
-    regions = []
-    def __init__(self):
-        self.regions = []
-
-    def __len__(self):
-        return len(self.regions)
-
-    def __iter__(self):
-        return self.regions.__iter__()
-
-    def add(self, region):
-        found = False
-        for r in self.regions:
-            if region.contains(r):
-                return
-        self.regions.append(region)
+import time
 
 class FilterToNewBufferFromSelectionCommand(sublime_plugin.TextCommand):
     """Filter the current selection in to a new buffer"""
@@ -31,22 +14,23 @@ class FilterToNewBufferFromSelectionCommand(sublime_plugin.TextCommand):
             print "FilterToNewBuffer: The selection is empty"
             return
 
+        self.log("Before find_all")
         regions = self.view.find_all(self.view.substr(selections[0]))
+        self.log("After find_all")
+        self.log("%d" % (len(regions)))
         if len(regions) > 0:
             v = self.view.window().new_file()
 #            v.set_name("Filtered from: + " + os.path.basename(self.view.file_name()))
             v.set_name("Filtered from:")
             v.set_scratch(True)
 
-            new_regions = RegionHolder()
-
-            for r in regions:
-                new_regions.add(self.view.line(r))
-
             newedit = v.begin_edit()
-            print "New regions"
-            for r in new_regions:
-                s = self.view.substr(r)
-                v.insert(newedit, v.size(), s + "\n")
-
+            self.log("Before extract strings")
+            for r in regions:
+                v.insert(newedit, v.size(), self.view.substr(self.view.line(r)) + "\n")
+            self.log("After extract strings")
             v.end_edit(newedit)
+
+    def log(self, s):
+        print "%f: %s" % (time.time(), s)
+
