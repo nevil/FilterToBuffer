@@ -26,8 +26,13 @@ class FilterToNewBufferFromSelectionCommand(sublime_plugin.TextCommand):
 
             newedit = v.begin_edit()
             self.log("Before extract strings")
+            previous_line = (0, 0)
             for r in regions:
-                v.insert(newedit, v.size(), self.view.substr(self.view.line(r)) + "\n")
+                current_line = self.view.line(r)
+                if previous_line != current_line:
+                    v.insert(newedit, v.size(), "%s\n" % (self.view.substr(current_line)))
+                previous_line = current_line
+
             self.log("After extract strings")
             v.end_edit(newedit)
 
